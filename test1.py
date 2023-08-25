@@ -20,7 +20,7 @@ chatbot_state = {
     "current_line": 0,
     "width": 3,
     "temp": 0.5,
-    "max_lenth":5000,
+    "max_length":5000,
     "gas_remaining": 100,
     "tape" : []
 }
@@ -73,21 +73,24 @@ def start():
     printline()
     click.echo(click.Context(chatbot).get_help())
 
+@chatbot.command()
+def help():
+    click.echo("Welcome to the Chatbot Monad where you the chat control the situation! Type help to see available commands.")
+    printline()
+    click.echo(click.Context(chatbot).get_help())
+
 
 @chatbot.command()
 def next():
-    click.echo("next")
+    click.echo("Reading Next Line")
     global chatbot_state
+
     if int(chatbot_state['current_line']) <  len(chatbot_state['tape']):
         chatbot_state['current_line']=  int(      chatbot_state['current_line']) + 1        
     else:
         click.echo("EOF")
     printline()
-
-@chatbot.command()
-def repeat():
-    click.echo("Repeat")
-    printline()
+    click.echo(f"gas remaining {chatbot_state['gas_remaining']}")
 
 @chatbot.command()
 @click.argument('args', nargs=-1)
@@ -96,6 +99,10 @@ def echo(args):
     message = ' '.join(args)
     click.echo(message)
 
+@chatbot.command()
+def repeat():
+    click.echo("Repeat")
+    printline()
         
 @chatbot.command()
 def prev():
@@ -106,6 +113,7 @@ def prev():
     else:
         click.echo("BOF")
     printline()
+    click.echo(f"gas remaining {chatbot_state['gas_remaining']}")
         
 
 @chatbot.command()
@@ -125,7 +133,7 @@ def consume_gas(gas_cost=1):
     global chatbot_state
     if chatbot_state["gas_remaining"] >= gas_cost:
         chatbot_state["gas_remaining"] -= gas_cost
-        click.echo(f"gas remaining {chatbot_state['gas_remaining']}")
+
         return True
     else:
         click.echo("Chatbot: Error: Not enough gas remaining to perform this action.")
@@ -145,11 +153,10 @@ def main_loop():
         sys.stdout = output_stream
         
         with output_stream as stream:
-        
-            printline()
-            click.echo(f"user: { user_input}")
+
             if not consume_gas(gas_cost=1):
-                break
+                return
+        
             if user_input.lower() == "exit":
                 click.echo("Chatbot: Goodbye!")
                 break
@@ -175,12 +182,12 @@ def main_loop():
 
 def send_to_model(user_input):
 
-    #print(f"DEBUG {user_input}")
+    print(f"DEBUG IN {user_input}")
     inputa = instruction(user_input)
     inputs = tokenizer(inputa, return_tensors="pt").to("cuda")
     tokens = model.generate(
         **inputs,
-        max_length=1000,
+        max_length=5000,
         temperature=0.2,
         pad_token_id=50256,
         do_sample=True,
