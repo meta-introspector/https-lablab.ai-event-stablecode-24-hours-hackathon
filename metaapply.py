@@ -50,7 +50,7 @@ def execute(file1, file2):
         for j,cmd_line in enumerate(lines_file1):
             if len(cmd_line) < 5:
                 continue
-            result = f"Evaluate step {step} of {maxl} the metaprogram line {A}:{i} '''" + cmd_line.strip() + " ''' applied to {B}:{j} '''" + data_line.strip() + " ''';"
+            result = f"Evaluate step {step} of {maxl} the metaprogram line {A}:{i} '''" + cmd_line.strip() + f" ''' applied to {B}:{j} '''" + data_line.strip() + " ''';"
             if result not in seen:
                 print(result)
                 seen[result] =1
