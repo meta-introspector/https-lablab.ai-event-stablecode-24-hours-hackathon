@@ -44,7 +44,7 @@ def execute(file1, file2):
     for i,data_line in enumerate(lines_file2):
         if len(data_line) < 5:
             continue
-        result = f"Now we we read line{B}:{j} '''" + data_line.strip() + " ''' and will prepare to apply the metaprogram."
+        result = f"Now we we read line {B}:{j} '''" + data_line.strip() + " ''' and will prepare to apply the metaprogram."
         print(result)
 
         for j,cmd_line in enumerate(lines_file1):
